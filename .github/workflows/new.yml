@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+  
+name: deploy lab infra
+jobs:
+  deploy:
+    environment: lab
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+    #- uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/actions/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CONNECTION_LAB }}
+        #creds: '{"clientId":"${{ secrets.LAB_CLIENT_ID }}","clientSecret":"${{ secrets.LAB_CLIENT_SECRET }}","tenantId":"${{ secrets.LAB_TENANT_ID }}","subscriptionId":"${{ secrets.LAB_SUBSCRIPTION_ID }}"}'
+
+       # Deploy ARM template
+    - name: deploy_storage
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.LAB_AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
+        template: ./code/Arrm.json
+        parameters: ./code/parameters.json
