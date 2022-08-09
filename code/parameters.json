@@ -3,14 +3,22 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vnetName": {
-            "value": "vnet-vl-lab-001"
+            "value": "vnet-lab-euwe-001"
+        },
+        "nsgName": {
+            "value": "nsg-lab"
+        },
+        "nsgNameAgw": {
+            "value": "nsg-agw-lab"
+        },
+        "subnetNameaks": {
+            "value": "snet-lab-euwe-001"
+        },
+        "subnetNameagw": {
+            "value": "snet-agw-lab-euwe-002"
+        },
+        "appgwRouteTableName":{
+            "value": "route-lab-001"
         }
-        "resourcegroupname":{
-            "value": "rg01"
-    }
     }
 }
-
-
-
-
