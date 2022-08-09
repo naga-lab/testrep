@@ -1,4 +1,4 @@
-# File: .github/workflows/example.yml
+# File: .github/workflows/ex1.yml
 
 on: [push]
 
