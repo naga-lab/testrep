@@ -2,7 +2,7 @@
 
 on: [push]
 
-name: myvnet
+name: myvm
 
 jobs:
 
@@ -15,10 +15,10 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
          # Deploy ARM template
-    - name: deploy_vnet
+    - name: deploy_vm
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.LAB_AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
-        template: ./code/arm.json
-        #parameter: ./code/parameters.json
+        template: ./code/vm.json
+        #parameters: ./code/parameters.json
