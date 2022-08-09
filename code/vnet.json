@@ -1,0 +1,174 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2018-03-01-hybrid",
+    "parameters": {
+        "nsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "network secqurity group name"
+            }
+        },
+        "nsgNameAgw": {
+            "type": "string",
+            "metadata": {
+                "description": "network security group name for agw"
+            }
+        },
+        "subnetNameagw": {
+            "type": "string",
+            "metadata": {
+                "description": "application gatway subnet name"
+            }
+        },
+        "subnetNameaks": {
+            "type": "string",
+            "metadata": {
+                "description": "aks subnet name"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "virtual network name"
+            }
+        },
+        "appgwRouteTableName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "addressPrefix": "10.103.32.0/23",
+        "nsgID": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgName'))]",
+        "nsgIDappGw": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('nsgNameAgw'))]",
+        "subnetNameagwPrefix": "10.103.32.192/27",
+        "subnetNameaksPrefix": "10.103.32.0/25",
+        "dnsservers": [
+        "10.103.12.228",
+        "10.103.12.229",
+        "10.103.0.132"
+    ]
+    },
+    "resources": [
+        {
+            "name": "[parameters('nsgName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "https",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('nsgNameAgw')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "GatewayManager",
+                        "properties": {
+                            "description": "This rule is required for Azure communication",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "65200-65535",
+                            "sourceAddressPrefix": "GatewayManager",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "https",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2020-11-01",
+            "type": "Microsoft.Network/routeTables",
+            "name": "[parameters('appgwRouteTableName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+            "displayName": "UDR - AppGw"
+            },
+            "properties": {
+            "routes": [
+                {
+                "name": "Internet",
+                "properties": {
+                    "addressPrefix": "0.0.0.0/0",
+                    "nextHopType": "Internet"
+                }
+                }
+            ]
+        }
+        },
+        {
+            "name": "[parameters('vnetName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('nsgName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('nsgNameAgw'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "dhcpoptions": {
+                    "dnsServers": "[variables('dnsservers')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetNameaks')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetNameaksPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('nsgID')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetNameagw')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetNameagwPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('nsgIDappGw')]"
+                            },
+                            "routeTable": {
+	                            "id": "[resourceId('Microsoft.Network/routeTables', parameters('appgwRouteTableName'))]"
+                        }
+                    }
+                    }
+                ]
+            }
+        }
+    ]
+}
