@@ -23,4 +23,4 @@ jobs:
         subscriptionId: ${{ secrets.LAB_AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
         template: ./code/Arrm.json
-        parameters: ./code/parameters.json
+        #parameters: ./code/parameters.json
