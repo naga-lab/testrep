@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
   
-name: deploy lab infra
+name: deploy lab
 jobs:
   deploy:
     environment: lab
