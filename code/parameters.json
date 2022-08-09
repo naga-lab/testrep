@@ -5,5 +5,12 @@
         "vnetName": {
             "value": "vnet-vl-lab-001"
         }
+        "resourcegroupname":{
+            "value": "rg01"
+    }
     }
 }
+
+
+
+
