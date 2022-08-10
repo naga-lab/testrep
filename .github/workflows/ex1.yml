@@ -1,8 +1,8 @@
-# File: .github/workflows/ex1.yml
+# File: .github/workflows/newone.yml
 
 on: [push]
 
-name: myvm
+name: newvm
 
 jobs:
 
