@@ -6,7 +6,7 @@ name: newvm
 
 jobs:
 
-  execute-sample:
+  newjob:
     runs-on: ubuntu-latest
     steps:
     
