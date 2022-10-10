@@ -24,7 +24,6 @@ jobs:
     - name: deploy_vm
       uses: azure/arm-deploy@v1
       with:
-        subscriptionId: ${{ secrets.LAB_AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
         template: ./code/vm.json
         #parameters: ./code/parameters.json
