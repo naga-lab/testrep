@@ -25,5 +25,5 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
-        template: ./code/vm.json
+        template: ./code/vnet.json
         #parameters: ./code/parameters.json
