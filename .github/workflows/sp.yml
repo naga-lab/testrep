@@ -1,28 +1,45 @@
-# File: .github/workflows/newone.yml
+on:
 
-on: [push]
+  workflow_dispatch:
 
-name: newvm
+ 
 
-permissions:
-  id-token: write
-  contents: read
-    
+name: sp-dev
+
 jobs:
-  newjob:
+
+  deploy:
+
+    environment: Dev
+
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@main    
+
+      # Checkout code
+
+    - uses: actions/checkout@main
+
+
+
+      # Log into Azure
+
     - uses: azure/login@v1
+
       with:
-        client-id: ${{ secrets.AZURE_CLINET_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    
-         # Deploy ARM template
-    - name: deploy_vm
+
+        creds: ${{ secrets.AZURE_CONNECTION_ID }}
+
+
+
+    - name: deploy_dev_storage
+
       uses: azure/arm-deploy@v1
+
       with:
-        resourceGroupName: ${{ secrets.LAB_AZURE_RG }}
+
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_DEV }}
+
+        resourceGroupName: ${{ secrets.AZURE_RG_DEV }}
+
         template: ./code/storage.json
-        #parameters: ./code/parameters.json
